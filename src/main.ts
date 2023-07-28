@@ -8,7 +8,7 @@ async function getChannelId(
   slackInstance: WebClient
 ): Promise<string | undefined> {
   try {
-    const result = await slackInstance.conversations.list()
+    const result = await slackInstance.conversations.list({ limit: 400} )
 
     const channel = result.channels?.find(c => c.name === channelName)
     if (channel) {
