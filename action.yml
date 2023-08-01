@@ -13,6 +13,9 @@ inputs:
   channel:
     description: 'Slack channel name'
     required: true
+  channel_id:
+    description: 'Slack channel ID. If provided, will be used as is. Otherwise, will be looked up by channel name'
+    required: false
   screenshots:
     description: 'The path of the directory where Cypress stores its screenshots. Defaults to `./cypress/screenshots`. No trailing slashes, please.'
     required: false
