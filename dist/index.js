@@ -52,12 +52,12 @@ function getChannelId(channelName, slackInstance) {
         try {
             const result = yield slackInstance.conversations.list({ limit: 400 });
             const channel = (_a = result.channels) === null || _a === void 0 ? void 0 : _a.find(c => c.name === channelName);
-            return channel === null || channel === void 0 ? void 0 : channel.id;
-            // if (channel) {
-            //   return channel.id
-            // } else {
-            //   core.setFailed(`Channel '${channelName}' not found.`)
-            // }
+            if (channel) {
+                return channel.id;
+            }
+            else {
+                core.setFailed(`Channel '${channelName}' not found.`);
+            }
             /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         }
         catch (error) {
@@ -97,7 +97,9 @@ function run() {
             core.info('Initializing slack SDK');
             const slack = new web_api_1.WebClient(token);
             core.info('Slack SDK initialized successfully');
-            core.info(`Supplied channel id is ${channel_id}. And it will be used for posting message`);
+            if (channel_id) {
+                core.info(`Found channel_id in inputs and it will be used instead of channel name: ${channel}`);
+            }
             const channelID = channel_id || (yield getChannelId(channel, slack));
             if (!channelID) {
                 return;

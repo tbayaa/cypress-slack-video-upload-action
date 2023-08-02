@@ -11,12 +11,11 @@ async function getChannelId(
     const result = await slackInstance.conversations.list({ limit: 400 })
 
     const channel = result.channels?.find(c => c.name === channelName)
-    return channel?.id
-    // if (channel) {
-    //   return channel.id
-    // } else {
-    //   core.setFailed(`Channel '${channelName}' not found.`)
-    // }
+    if (channel) {
+      return channel.id
+    } else {
+      core.setFailed(`Channel '${channelName}' not found.`)
+    }
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   } catch (error: any) {
     core.setFailed(`Failed to fetch channel ID: ${error.message}`)
@@ -60,9 +59,11 @@ async function run(): Promise<void> {
     core.info('Initializing slack SDK')
     const slack = new WebClient(token)
     core.info('Slack SDK initialized successfully')
-    core.info(
-      `Supplied channel id is ${channel_id}. And it will be used for posting message`
-    )
+    if (channel_id) {
+      core.info(
+        `Found channel_id in inputs and it will be used instead of channel name: ${channel}`
+      )
+    }
     const channelID = channel_id || (await getChannelId(channel, slack))
     if (!channelID) {
       return
