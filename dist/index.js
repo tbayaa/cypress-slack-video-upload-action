@@ -50,7 +50,7 @@ function getChannelId(channelName, slackInstance) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const result = yield slackInstance.conversations.list();
+            const result = yield slackInstance.conversations.list({ limit: 400 });
             const channel = (_a = result.channels) === null || _a === void 0 ? void 0 : _a.find(c => c.name === channelName);
             if (channel) {
                 return channel.id;
@@ -71,6 +71,7 @@ function run() {
             const action = core.getInput('action');
             const token = core.getInput('token');
             const channel = core.getInput('channel');
+            const channel_id = core.getInput('channel_id');
             const author = core.getInput('author');
             const screenshotsDir = core.getInput('screenshots') || 'cypress/screenshots';
             const videosDir = core.getInput('videos') || 'cypress/videos';
@@ -78,6 +79,7 @@ function run() {
             const previousMsgThreadId = core.getInput('thread-id') || '';
             core.info(`Action: ${action}`);
             core.info(`Channel: ${channel}`);
+            core.info(`channel_id: ${channel_id}`);
             core.info(`Message text: ${messageText}`);
             core.info(`Author: ${author}`);
             core.info(`Screenshots dir: ${screenshotsDir}`);
@@ -95,7 +97,10 @@ function run() {
             core.info('Initializing slack SDK');
             const slack = new web_api_1.WebClient(token);
             core.info('Slack SDK initialized successfully');
-            const channelID = yield getChannelId(channel, slack);
+            if (channel_id) {
+                core.info(`Found channel_id in inputs and it will be used instead of channel name: ${channel}`);
+            }
+            const channelID = channel_id || (yield getChannelId(channel, slack));
             if (!channelID) {
                 return;
             }

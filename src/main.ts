@@ -8,7 +8,7 @@ async function getChannelId(
   slackInstance: WebClient
 ): Promise<string | undefined> {
   try {
-    const result = await slackInstance.conversations.list({ limit: 400} )
+    const result = await slackInstance.conversations.list({ limit: 400 })
 
     const channel = result.channels?.find(c => c.name === channelName)
     if (channel) {
@@ -27,6 +27,7 @@ async function run(): Promise<void> {
     const action = core.getInput('action')
     const token = core.getInput('token')
     const channel = core.getInput('channel')
+    const channel_id = core.getInput('channel_id')
     const author = core.getInput('author')
     const screenshotsDir = core.getInput('screenshots') || 'cypress/screenshots'
     const videosDir = core.getInput('videos') || 'cypress/videos'
@@ -35,6 +36,7 @@ async function run(): Promise<void> {
 
     core.info(`Action: ${action}`)
     core.info(`Channel: ${channel}`)
+    core.info(`channel_id: ${channel_id}`)
     core.info(`Message text: ${messageText}`)
     core.info(`Author: ${author}`)
     core.info(`Screenshots dir: ${screenshotsDir}`)
@@ -57,8 +59,12 @@ async function run(): Promise<void> {
     core.info('Initializing slack SDK')
     const slack = new WebClient(token)
     core.info('Slack SDK initialized successfully')
-
-    const channelID = await getChannelId(channel, slack)
+    if (channel_id) {
+      core.info(
+        `Found channel_id in inputs and it will be used instead of channel name: ${channel}`
+      )
+    }
+    const channelID = channel_id || (await getChannelId(channel, slack))
     if (!channelID) {
       return
     }
