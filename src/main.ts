@@ -185,7 +185,7 @@ async function run(): Promise<void> {
         screenshots.map(async screenshot => {
           core.info(`Uploading ${screenshot}`)
 
-        await slack.filesUploadV2({
+          await slack.filesUploadV2({
             filename: screenshot,
             file: createReadStream(`${screenshotsDir}/${screenshot}`),
             thread_ts: previousMsgThreadId,
