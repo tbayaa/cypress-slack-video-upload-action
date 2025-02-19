@@ -185,11 +185,11 @@ async function run(): Promise<void> {
         screenshots.map(async screenshot => {
           core.info(`Uploading ${screenshot}`)
 
-          await slack.files.upload({
+        await slack.filesUploadV2({
             filename: screenshot,
             file: createReadStream(`${screenshotsDir}/${screenshot}`),
             thread_ts: previousMsgThreadId,
-            channels: channelID
+            channel_id: channelID
           })
         })
       )
@@ -204,11 +204,11 @@ async function run(): Promise<void> {
         videos.map(async video => {
           core.info(`Uploading ${video}`)
 
-          await slack.files.upload({
+          await slack.filesUploadV2({
             filename: video,
             file: createReadStream(`${videosDir}/${video}`),
             thread_ts: previousMsgThreadId,
-            channels: channelID
+            channel_id: channelID
           })
         })
       )
